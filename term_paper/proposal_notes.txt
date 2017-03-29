@@ -1,0 +1,9 @@
+
+Notes:
+
+- Aligning with research area is good, but can't miss class goal (what's the goal?)
+- Goal: Do something with a parallel algorithm, such as benchmarking, analyzing...
+- Tracing algorithm/format
+- Cost of tracing (benchmark before/after)
+- Comparison and benchmarking of parallel tracing implementations
+- 
