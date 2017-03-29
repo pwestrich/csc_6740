@@ -8,8 +8,8 @@ RM 	 := rm -f
 MV 	 := mv
 
 #build information
-INC_DIRS := 
-LIB_DIRS := 
+INC_DIRS :=
+LIB_DIRS :=
 LIBS 	 :=
 
 #how we build things
@@ -28,7 +28,7 @@ OBJECT := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 all: $(TARGET)
 
-clean: 
+clean:
 
 	$(RM) $(TARGET) $(OBJECT)
 	$(RM) -r *.dYSM
@@ -37,8 +37,11 @@ main: main.o
 
 	$(LINK) main main.o $(LIBS)
 
+main.o: main.cpp matrix.h
+
+	$(COMPILE) main.cpp
+
 #generic rule for anything missed
 %.o: %.cpp %.h
 
 	$(COMPILE) $<
-
