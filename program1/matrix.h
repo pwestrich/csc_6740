@@ -17,18 +17,14 @@ private:
 
     const uint32_t n;       //#rows/cols
     const uint32_t size;    //how many elements?
-    T *elements;            //container holding them
+    T *const elements;      //container holding them
 
 public:
 
     //Constructs an empty matrix with enough size for n*n elements
-    Matrix(const uint32_t _n) : n(_n), size(n * n){
+    Matrix(const uint32_t _n) : n(_n), size(n * n), elements(new T[size]){
 
-        elements = new T[size];
-
-        #ifndef NDEBUG
         std::fill(elements, elements + size, 0);
-        #endif
 
     };
 
@@ -38,11 +34,6 @@ public:
     ~Matrix(){
 
         delete [] elements;
-        #ifndef NDEBUG
-        elements    = nullptr;
-        n           = 0;
-        size        = 0;
-        #endif
 
     }
 
@@ -78,16 +69,6 @@ public:
 
     }
 
-    static Matrix<T> *zeroMatrix(const uint32_t blockSize){
-
-        Matrix<T> *matrix = new Matrix<double>(blockSize);
-
-        std::fill(matrix->elements, matrix->elements + matrix->getSize(), 0);
-
-        return matrix;
-
-    }
-
     static Matrix<T> *initializeMatrix(const uint32_t blockSize){
 
     	std::default_random_engine generator;
@@ -117,7 +98,7 @@ public:
 
     uint32_t getSize() const {
 
-        return n * n;
+        return size;
 
     }
 
@@ -131,7 +112,6 @@ public:
 
         assert(row < n);
         assert(col < n);
-
         elements[(row * n) + col] = element;
 
     }
@@ -140,7 +120,6 @@ public:
 
         assert(row < n);
         assert(col < n);
-
         elements[(row * n) + col] += element;
 
     }
@@ -151,19 +130,23 @@ public:
 
     }
 
-    void print() const {
+    void print(std::ostream &out) const {
+
+        out << n << std::endl;
 
         for (uint32_t i = 0; i < n; ++i){
 
             for (uint32_t j = 0; j < n; ++j){
 
-                std::cout << getElement(i, j) << " ";
+                out << getElement(i, j) << ",";
 
             }
 
-            std::cout << std::endl;
+            out << std::endl;
 
         }
+
+        out << std::endl;
 
     }
 

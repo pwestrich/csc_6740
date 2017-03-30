@@ -2,7 +2,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstdint>
+#include <fstream>
 #include <iostream>
+#include <string>
 #include <utility>
 
 #include <mpi.h>
@@ -37,18 +39,17 @@ inline void usage(const char *name){
 /*
 *	Multiplies two matricies such that A * B = C, using Cannon's algorithm.
 */
-Matrix<double> *mpi_cannon_multiply(const Parameters &params){
+void mpi_cannon_multiply(const Parameters &params){
 
 	//Step 1: Partition the data
-	Matrix<double> *myA = Matrix<double>::identityMatrix(params.blockSize);
-	Matrix<double> *myB = Matrix<double>::identityMatrix(params.blockSize);
-	Matrix<double> *myC = Matrix<double>::zeroMatrix(params.blockSize);
+	Matrix<double> *myA = Matrix<double>::initializeMatrix(params.blockSize);
+	Matrix<double> *myB = Matrix<double>::initializeMatrix(params.blockSize);
+	Matrix<double> *myC = new Matrix<double>(params.blockSize);
 
 	Matrix<double> *nextA = new Matrix<double>(params.blockSize);
 	Matrix<double> *nextB = new Matrix<double>(params.blockSize);
 
 	//Step 2: Split processes into their rows and columns
-	const uint32_t blocks = params.n / params.blockSize;
 	const uint32_t rowSize = static_cast<uint32_t>(sqrt(params.p));
 	int rowRank, colRank;
 
@@ -58,26 +59,17 @@ Matrix<double> *mpi_cannon_multiply(const Parameters &params){
 	MPI_Comm_rank(rowComm, &rowRank);
 	MPI_Comm_rank(colComm, &colRank);
 
+	std::ofstream outFile(std::to_string(params.rank) + ".txt");
+	outFile << "rank: " << params.rank << "("<< rowRank << "," << colRank << ")"<< std::endl;
+	outFile << "A ";
+	myA->print(outFile);
+	outFile << "B ";
+	myB->print(outFile);
+
 	const uint32_t nextRow = (rowRank + 1) % rowSize;
 	const uint32_t nextCol = (colRank + 1) % rowSize;
 	const uint32_t prevRow = (rowRank - 1) % rowSize;
 	const uint32_t prevCol = (colRank - 1) % rowSize;
-
-	for (uint32_t i = 0; i < params.p; ++i){
-
-		if (i == params.rank){
-
-			std::cout << "originalRank: " << params.rank << " blocks: " << blocks << " rowSize: " << rowSize << std::endl;
-			std::cout << "rowRank: " << rowRank << " colRank: " << colRank << std::endl;
-			std::cout << "nextRow: " << nextRow << " nextCol: " << nextCol << std::endl;
-			std::cout << "prevRow: " << prevRow << " prevCol: " << prevCol << std::endl;
-			std::cout << "-----------------------------------------------" << std::endl;
-
-		}
-
-		MPI_Barrier(MPI_COMM_WORLD);
-
-	}
 
 	//we need to do these once per block
 	for (uint32_t block = 0; block < rowSize; ++block){
@@ -92,12 +84,12 @@ Matrix<double> *mpi_cannon_multiply(const Parameters &params){
 		MPI_Irecv(static_cast<void*>(nextB->getRaw()), nextB->getSize(), MPI_DOUBLE, prevCol, 0, colComm, &requests[3]);
 
 		//Step 4: Multiply my set together (naive method for now)
-		for (uint32_t i = 0; i < params.n; ++i){
+		for (uint32_t i = 0; i < params.blockSize; ++i){
 
-			for (uint32_t j = 0; j < params.n; ++j){
+			for (uint32_t j = 0; j < params.blockSize; ++j){
 
 				double sum = 0.0;
-				for (uint32_t k = 0; k < params.n; ++k){
+				for (uint32_t k = 0; k < params.blockSize; ++k){
 
 					sum += myA->getElement(i, k) * myB->getElement(k, j);
 
@@ -117,15 +109,19 @@ Matrix<double> *mpi_cannon_multiply(const Parameters &params){
 
 	}
 
-	//Step 6: Clean up and finish.
+	//Step 6: write results to file
+	outFile << "C ";
+	myC->print(outFile);
+	outFile.close();
+
+	//Step 7: Clean up.
 	MPI_Comm_free(&rowComm);
 	MPI_Comm_free(&colComm);
 	delete myA;
 	delete myB;
+	delete myC;
 	delete nextA;
 	delete nextB;
-
-	return myC;
 
 }
 
@@ -199,24 +195,9 @@ int main(int argc, char *argv[]){
 
 	}
 
-	Matrix<double> *C = mpi_cannon_multiply(params);
-
-	for (uint32_t i = 0; i < params.p; ++i){
-
-		if (i == params.rank){
-
-			std::cout << "rank: " << params.rank << std::endl;
-			C->print();
-			std::cout << std::endl << "-----------------------------------------------" << std::endl;
-
-		}
-
-		MPI_Barrier(MPI_COMM_WORLD);
-
-	}
+	mpi_cannon_multiply(params);
 
 	//exit
-	delete C;
 	MPI_Finalize();
 	return EXIT_SUCCESS;
 
