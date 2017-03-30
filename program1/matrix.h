@@ -15,9 +15,9 @@ class Matrix {
 
 private:
 
-    const uint32_t n;         //#rows/cols
-    const uint32_t size;      //how many elements?
-    T *elements; //container holding them
+    const uint32_t n;       //#rows/cols
+    const uint32_t size;    //how many elements?
+    T *elements;            //container holding them
 
 public:
 
@@ -26,13 +26,23 @@ public:
 
         elements = new T[size];
 
+        #ifndef NDEBUG
+        std::fill(elements, elements + size, 0);
+        #endif
+
     };
 
-    Matrix(const Matrix& src) = delete;
+    Matrix(const Matrix &src) = delete;
+    Matrix& operator=(const Matrix&) = delete;
 
     ~Matrix(){
 
         delete [] elements;
+        #ifndef NDEBUG
+        elements    = nullptr;
+        n           = 0;
+        size        = 0;
+        #endif
 
     }
 
@@ -119,11 +129,17 @@ public:
 
     void setElement(const uint32_t row, const uint32_t col, const T element){
 
+        assert(row < n);
+        assert(col < n);
+
         elements[(row * n) + col] = element;
 
     }
 
     void addToElement(const uint32_t row, const uint32_t col, const T element){
+
+        assert(row < n);
+        assert(col < n);
 
         elements[(row * n) + col] += element;
 
