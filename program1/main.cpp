@@ -118,6 +118,12 @@ Matrix<double> *mpi_cannon_multiply(const Parameters &params){
 	}
 
 	//Step 6: Clean up and finish.
+	MPI_Comm_free(&rowComm);
+	MPI_Comm_free(&colComm);
+	delete myA;
+	delete myB;
+	delete nextA;
+	delete nextB;
 	return myC;
 
 }
@@ -192,7 +198,7 @@ int main(int argc, char *argv[]){
 
 	}
 
-	auto C = mpi_cannon_multiply(params);
+	Matrix<double> *C = mpi_cannon_multiply(params);
 
 	for (uint32_t i = 0; i < params.p; ++i){
 
@@ -209,6 +215,7 @@ int main(int argc, char *argv[]){
 	}
 
 	//exit
+	delete C;
 	MPI_Finalize();
 	return EXIT_SUCCESS;
 

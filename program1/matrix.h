@@ -29,6 +29,7 @@ public:
     };
 
     Matrix(const Matrix& src) = delete;
+    Matrix& operator=(const Matrix&) = delete;
 
     ~Matrix(){
 
