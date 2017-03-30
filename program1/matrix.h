@@ -2,8 +2,10 @@
 #ifndef MATRIX__H
 #define MATRIX__H
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <random>
 #include <vector>
@@ -13,17 +15,26 @@ class Matrix {
 
 private:
 
-    uint32_t n;         //#rows/cols
-    uint32_t size;      //how many elements?
-    std::vector<T> elements; //container holding them
+    const uint32_t n;         //#rows/cols
+    const uint32_t size;      //how many elements?
+    T *elements; //container holding them
 
 public:
 
     //Constructs an empty matrix with enough size for n*n elements
-    Matrix(const uint32_t _n) : n(_n), size(n * n), elements(size, static_cast<T>(0)){};
+    Matrix(const uint32_t _n) : n(_n), size(n * n){
 
-    //Fills the matrix with the specified elements
-    Matrix(std::input_iterator_tag first, const uint32_t _n) : n(_n), size(n * n), elements(first, first + size){};
+        elements = new T[size];
+
+    };
+
+    Matrix(const Matrix& src) = delete;
+
+    ~Matrix(){
+
+        delete [] elements;
+
+    }
 
     bool operator==(const Matrix<T> &other){
 
@@ -57,6 +68,16 @@ public:
 
     }
 
+    static Matrix<T> *zeroMatrix(const uint32_t blockSize){
+
+        Matrix<T> *matrix = new Matrix<double>(blockSize);
+
+        std::fill(matrix->elements, matrix->elements + matrix->getSize(), 0);
+
+        return matrix;
+
+    }
+
     static Matrix<T> *initializeMatrix(const uint32_t blockSize){
 
     	std::default_random_engine generator;
@@ -75,33 +96,6 @@ public:
     	}
 
     	return matrix;
-
-    }
-
-    //Multples C = A * B using the naive method, single-core
-    static void multiply(const Matrix<T> &A, const Matrix<T> &B, Matrix<T> &C){
-
-        const uint32_t n = A.getN();
-
-        assert(n == B.getN());
-        assert(n == C.getN());
-
-        for (uint32_t i = 0; i < n; ++i){
-
-            for (uint32_t j = 0; j < n; ++j){
-
-                T sum = static_cast<T>(0);
-                for (uint32_t k = 0; k < n; ++k){
-
-                    sum += A.getElement(i, k) * B.getElement(k, j);
-
-                }
-
-                C.setElement(i, j, sum);
-
-            }
-
-        }
 
     }
 
@@ -129,9 +123,31 @@ public:
 
     }
 
-    T* getRaw() const {
+    void addToElement(const uint32_t row, const uint32_t col, const T element){
 
-        return elements.data();
+        elements[(row * n) + col] += element;
+
+    }
+
+    T* getRaw(){
+
+        return elements;
+
+    }
+
+    void print() const {
+
+        for (uint32_t i = 0; i < n; ++i){
+
+            for (uint32_t j = 0; j < n; ++j){
+
+                std::cout << getElement(i, j) << " ";
+
+            }
+
+            std::cout << std::endl;
+
+        }
 
     }
 

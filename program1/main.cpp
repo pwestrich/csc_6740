@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <iostream>
+#include <utility>
 
 #include <mpi.h>
 
@@ -10,6 +11,21 @@
 
 #define MASTER 0 //the master process is 0
 
+/*
+*	Holds the parameters of the problem so my argument lists aren't long.
+*/
+struct Parameters {
+
+	uint32_t rank;
+	uint32_t p;
+	uint32_t n;
+	uint32_t blockSize;
+
+};
+
+/*
+*	Prints the usage of the program given its name from argv[0].
+*/
 inline void usage(const char *name){
 
 	std::cout << "Usage: mpiexec -n <num_procs> " << name << " <matrix_size>" << std::endl;
@@ -18,17 +34,91 @@ inline void usage(const char *name){
 
 }
 
-void mpi_multiply(const uint32_t rank, const uint32_t n, const uint32_t blockSize, const uint32_t p){
+/*
+*	Multiplies two matricies such that A * B = C, using Cannon's algorithm.
+*/
+Matrix<double> *mpi_cannon_multiply(const Parameters &params){
 
-	//initialize matricies
-	Matrix<double> *myA = Matrix<double>::identityMatrix(blockSize);
-	Matrix<double> *myB = Matrix<double>::identityMatrix(blockSize);
-	Matrix<double> *myC = new Matrix<double>(blockSize);
+	//Step 1: Partition the data
+	Matrix<double> *myA = Matrix<double>::identityMatrix(params.blockSize);
+	Matrix<double> *myB = Matrix<double>::identityMatrix(params.blockSize);
+	Matrix<double> *myC = Matrix<double>::zeroMatrix(params.blockSize);
 
-	//test the single threaded multiply
-	Matrix<double>::multiply(*myA, *myB, *myC);
-	assert(*myC == *myA);
-	assert(*myC == *myB);
+	Matrix<double> *nextA = new Matrix<double>(params.blockSize);
+	Matrix<double> *nextB = new Matrix<double>(params.blockSize);
+
+	//Step 2: Split processes into their rows and columns
+	const uint32_t blocks = params.n / params.blockSize;
+	const uint32_t rowSize = static_cast<uint32_t>(sqrt(params.p));
+	int rowRank, colRank;
+
+	MPI_Comm rowComm, colComm;
+	MPI_Comm_split(MPI_COMM_WORLD, params.rank / rowSize, params.rank, &rowComm);
+	MPI_Comm_split(MPI_COMM_WORLD, params.rank % rowSize, params.rank, &colComm);
+	MPI_Comm_rank(rowComm, &rowRank);
+	MPI_Comm_rank(colComm, &colRank);
+
+	const uint32_t nextRow = (rowRank + 1) % rowSize;
+	const uint32_t nextCol = (colRank + 1) % rowSize;
+	const uint32_t prevRow = (rowRank - 1) % rowSize;
+	const uint32_t prevCol = (colRank - 1) % rowSize;
+
+	for (uint32_t i = 0; i < params.p; ++i){
+
+		if (i == params.rank){
+
+			std::cout << "originalRank: " << params.rank << " blocks: " << blocks << " rowSize: " << rowSize << std::endl;
+			std::cout << "rowRank: " << rowRank << " colRank: " << colRank << std::endl;
+			std::cout << "nextRow: " << nextRow << " nextCol: " << nextCol << std::endl;
+			std::cout << "prevRow: " << prevRow << " prevCol: " << prevCol << std::endl;
+			std::cout << "-----------------------------------------------" << std::endl;
+
+		}
+
+		MPI_Barrier(MPI_COMM_WORLD);
+
+	}
+
+	//we need to do these once per block
+	for (uint32_t block = 0; block < rowSize; ++block){
+
+		//Step 3: Start getting the next set
+		MPI_Request requests[4];
+		MPI_Status statuses[4];
+		MPI_Isend(static_cast<void*>(myA->getRaw()), myA->getSize(), MPI_DOUBLE, nextRow, 0, rowComm, &requests[0]);
+		MPI_Isend(static_cast<void*>(myB->getRaw()), myB->getSize(), MPI_DOUBLE, nextCol, 0, colComm, &requests[1]);
+
+		MPI_Irecv(static_cast<void*>(nextA->getRaw()), nextA->getSize(), MPI_DOUBLE, prevRow, 0, rowComm, &requests[2]);
+		MPI_Irecv(static_cast<void*>(nextB->getRaw()), nextB->getSize(), MPI_DOUBLE, prevCol, 0, colComm, &requests[3]);
+
+		//Step 4: Multiply my set together (naive method for now)
+		for (uint32_t i = 0; i < params.n; ++i){
+
+			for (uint32_t j = 0; j < params.n; ++j){
+
+				double sum = 0.0;
+				for (uint32_t k = 0; k < params.n; ++k){
+
+					sum += myA->getElement(i, k) * myB->getElement(k, j);
+
+				}
+
+				myC->addToElement(i, j, sum);
+
+			}
+
+		}
+
+		//Step 5: Wait on step 3 to finish, then swap and loop
+		MPI_Waitall(4, requests, statuses);
+
+		std::swap(myA, nextA);
+		std::swap(myB, nextB);
+
+	}
+
+	//Step 6: Clean up and finish.
+	return myC;
 
 }
 
@@ -55,15 +145,13 @@ int main(int argc, char *argv[]){
 
 	}
 
-	const uint32_t rank 		= _rank;
-	const uint32_t p 			= _p;
-	const uint32_t n 			= std::stoul(argv[1]);
-	const uint32_t blockSize  	= n / p;
+	const uint32_t _n = std::stoul(argv[1]);
+	const Parameters params = {static_cast<uint32_t>(_rank), static_cast<uint32_t>(_p), _n, _n / _p};
 
 	//test arguments
-	if (n <= 0){
+	if (params.n <= 0){
 
-		if (rank == MASTER){
+		if (params.rank == MASTER){
 
 			std::cerr << "Error: n is negative." << std::endl;
 			usage(argv[0]);
@@ -73,11 +161,11 @@ int main(int argc, char *argv[]){
 		MPI_Finalize();
 		return EXIT_FAILURE;
 
-	} else if (sqrt(p) != floor(sqrt(p))){
+	} else if (sqrt(params.p) != floor(sqrt(params.p))){
 
-		if (rank == MASTER){
+		if (params.rank == MASTER){
 
-			std::cerr << "Error: sqrt(" << p << ") is not an even number." << std::endl;
+			std::cerr << "Error: sqrt(" << params.p << ") is not an even number." << std::endl;
 			usage(argv[0]);
 
 		}
@@ -85,11 +173,11 @@ int main(int argc, char *argv[]){
 		MPI_Finalize();
 		return EXIT_FAILURE;
 
-	} else if ((n % static_cast<uint32_t>(floor(sqrt(p)))) != 0){
+	} else if ((params.n % static_cast<uint32_t>(floor(sqrt(params.p)))) != 0){
 
-		if (rank == MASTER){
+		if (params.rank == MASTER){
 
-			std::cerr << "Error: " << n << " % sqrt(" << p << ") != 0" << std::endl;
+			std::cerr << "Error: " << params.n << " % sqrt(" << params.p << ") != 0" << std::endl;
 			usage(argv[0]);
 
 		}
@@ -97,14 +185,28 @@ int main(int argc, char *argv[]){
 		MPI_Finalize();
 		return EXIT_FAILURE;
 
-	} else if (rank == MASTER) {
+	} else if (params.rank == MASTER) {
 
-		std::cout << "Multiplying two dense matricies of size " << n << " with block size "
-				  << blockSize << " and " << p << " processes." << std::endl;
+		std::cout << "Multiplying two dense matricies of size " << params.n << " with block size "
+				  << params.blockSize << " and " << params.p << " processes." << std::endl;
 
 	}
 
-	mpi_multiply(rank, n, blockSize, p);
+	auto C = mpi_cannon_multiply(params);
+
+	for (uint32_t i = 0; i < params.p; ++i){
+
+		if (i == params.rank){
+
+			std::cout << "rank: " << params.rank << std::endl;
+			C->print();
+			std::cout << std::endl << "-----------------------------------------------" << std::endl;
+
+		}
+
+		MPI_Barrier(MPI_COMM_WORLD);
+
+	}
 
 	//exit
 	MPI_Finalize();
