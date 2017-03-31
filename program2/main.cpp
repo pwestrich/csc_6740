@@ -129,7 +129,7 @@ int main(const int argc, const char *argv[]){
 
         //Step 2: Reserve some space
         Matrix myA = randomMatrix(blockMatrixSize);
-        Matrix myB = randomMatrix(blockMatrixSize);;
+        Matrix myB = randomMatrix(blockMatrixSize);
         Matrix myC(blockMatrixSize, 0);
         Matrix nextA(blockMatrixSize);
         Matrix nextB(blockMatrixSize);
