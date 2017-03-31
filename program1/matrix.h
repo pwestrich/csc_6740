@@ -71,8 +71,8 @@ public:
 
     static Matrix<T> *initializeMatrix(const uint32_t blockSize){
 
-    	std::default_random_engine generator;
-    	std::uniform_int_distribution<int> distribution(-10, 10);
+    	static std::default_random_engine generator;
+    	static std::uniform_int_distribution<int> distribution(-10, 10);
 
     	Matrix<double> *matrix = new Matrix<double>(blockSize);
 
