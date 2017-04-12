@@ -1,7 +1,7 @@
 
 #utility information
 CXX      := g++
-CPPFLAGS := -std=c++11 -O0 -pedantic -Wall -Wextra -g
+CPPFLAGS := -std=c++11 -O3 -pedantic -Wall -Wextra
 LDFLAGS  := $(CPPFLAGS)
 AR 	 := ar -r
 RM 	 := rm -f
@@ -33,11 +33,11 @@ clean:
 	$(RM) $(TARGET) $(OBJECT)
 	$(RM) -r *.dYSM
 
-main: main.o
+$(TARGET): $(OBJECT)
 
-	$(LINK) main main.o $(LIBS)
+	$(LINK) $(TARGET) $(OBJECT) $(LIBS)
 
-main.o: main.cpp
+main.o: main.cpp getRealTime.h
 
 	$(COMPILE) main.cpp
 

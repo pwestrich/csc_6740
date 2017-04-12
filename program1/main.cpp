@@ -10,6 +10,7 @@
 #include <mpi.h>
 
 #include "matrix.h"
+#include "getRealTime.h"
 
 #define MASTER 0 //the master process is 0
 
@@ -58,14 +59,14 @@ void mpi_cannon_multiply(const Parameters &params){
 	MPI_Comm_split(MPI_COMM_WORLD, params.rank % rowSize, params.rank, &colComm);
 	MPI_Comm_rank(rowComm, &rowRank);
 	MPI_Comm_rank(colComm, &colRank);
-
+	/*
 	std::ofstream outFile(std::to_string(params.rank) + ".txt");
 	outFile << "rank: " << params.rank << "("<< rowRank << "," << colRank << ")"<< std::endl;
 	outFile << "A ";
 	myA->print(outFile);
 	outFile << "B ";
 	myB->print(outFile);
-
+	*/
 	const uint32_t nextRow = (rowRank + 1) % rowSize;
 	const uint32_t nextCol = (colRank + 1) % rowSize;
 	const uint32_t prevRow = (rowRank - 1) % rowSize;
@@ -110,9 +111,9 @@ void mpi_cannon_multiply(const Parameters &params){
 	}
 
 	//Step 6: write results to file
-	outFile << "C ";
+	/*outFile << "C ";
 	myC->print(outFile);
-	outFile.close();
+	outFile.close();*/
 
 	//Step 7: Clean up.
 	MPI_Comm_free(&rowComm);
@@ -195,7 +196,17 @@ int main(int argc, char *argv[]){
 
 	}
 
+	const double startTime = getRealTime();
+
 	mpi_cannon_multiply(params);
+
+	const double elapsedTime = getRealTime() - startTime;
+
+	if (params.rank == MASTER){
+
+		std::cout << "Finished. Took " << elapsedTime << " seconds." << std::endl;
+
+	}
 
 	//exit
 	MPI_Finalize();

@@ -11,6 +11,8 @@
 #define BSP_DISABLE_LEGACY
 #include "bsp/bsp.h"
 
+#include "getRealTime.h"
+
 typedef std::vector<double> Matrix;
 
 inline double getElement(const Matrix &matrix, const uint32_t row, const uint32_t col, const uint32_t n){
@@ -117,6 +119,8 @@ int main(const int argc, const char *argv[]){
 
     }
 
+    const double startTime = getRealTime();
+
     BSPLib::Execute([&]{
 
         //Step 1: Calculate my indicies
@@ -133,14 +137,14 @@ int main(const int argc, const char *argv[]){
         Matrix myC(blockMatrixSize, 0);
         Matrix nextA(blockMatrixSize);
         Matrix nextB(blockMatrixSize);
-
+        /*
         std::ofstream outFile(std::to_string(pid) + ".txt");
         outFile << "rank: " << pid << std::endl;
         outFile << "A ";
         writeToFile(outFile, myA, blockSize);
         outFile << "B ";
         writeToFile(outFile, myB, blockSize);
-
+        */
         BSPLib::PushContainer(myA);
         BSPLib::PushContainer(myB);
         BSPLib::PushContainer(nextA);
@@ -149,7 +153,7 @@ int main(const int argc, const char *argv[]){
 
         for (uint32_t block = 0; block < blocksPerRow; ++block){
 
-            //Step 3: Multiply my matricies
+            //Step 3: Multiply my matricies and shift
             for (uint32_t i = 0; i < blockSize; ++i){
 
                 for (uint32_t j = 0; j < blockSize; ++j){
@@ -167,28 +171,27 @@ int main(const int argc, const char *argv[]){
 
             }
 
-            BSPLib::Sync();
-
-            //Step 4: Shift
             BSPLib::PutContainer(rightPid, myA);
             BSPLib::PutContainer(downPid, myB);
             BSPLib::GetContainer(leftPid, nextA);
             BSPLib::GetContainer(upPid, nextB);
             BSPLib::Sync();
 
-            //Step 5: Swap
+            //Step 4: Swap
             std::swap(myA, nextA);
             std::swap(myB, nextB);
 
         }
 
         //Step 5: Clean up and exit
-        outFile << "C ";
+        /*outFile << "C ";
         writeToFile(outFile, myC, blockSize);
-        outFile.close();
-
+        outFile.close();*/
 
     }, p);
+
+    const double elapsedTime = getRealTime() - startTime;
+    std::cout << "Done. Took " << elapsedTime << " seconds." << std::endl;
     return 0;
 
 }
