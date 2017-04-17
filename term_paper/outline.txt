@@ -1,0 +1,24 @@
+
+Title: 
+Determining the Added Overhead of the EZTrace system
+
+Abstract:
+Large parallel processes scale to thousands of processes and threads on the largest of machines.
+In order to determine unforseen performance bottlenecks, most developers turn to tracing and profiling.
+Howewver, this tracing and profiling takes a toll on performance itself. In this paper, we present
+measurements of the EZTrace library to determine the overhead it introduces.
+
+Outline:
+1. Introuction
+	a)	Why we need HPC
+	b)	What is tracing/profiling?
+	c)	What is EZTrace?
+	d)	Why is it important?
+	e)	What makes it difficult?
+2. Testing methods
+	a)	Explain what methods were used to test tools in #1.c
+3. Results
+	a)	Explain results (tables, graphs, paragraphs)
+	b)	Discuss the results
+4. Conclusion
+	a)	Sum it up.
