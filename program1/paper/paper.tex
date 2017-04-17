@@ -1,4 +1,3 @@
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % LaTeX Example: Project Report
 %
@@ -9,34 +8,15 @@
 % Date: March 2011 
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% How to use writeLaTeX: 
-%
-% You edit the source code here on the left, and the preview on the
-% right shows you the result within a few seconds.
-%
-% Bookmark this page and share the URL with your co-authors. They can
-% edit at the same time!
-%
-% You can upload figures, bibliographies, custom classes and
-% styles using the files menu.
-%
-% If you're new to LaTeX, the wikibook is a great place to start:
-% http://en.wikibooks.org/wiki/LaTeX
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Edit the title below to update the display in My Documents
-%\title{Project Report}
-%
 %%% Preamble
-\documentclass[paper=letter, fontsize=11pt]{scrartcl}
+\documentclass[paper=letter, fontsize=10pt]{scrartcl}
 \usepackage[T1]{fontenc}
 \usepackage{fourier}
 
 \usepackage[english]{babel}															% English language/hyphenation
 \usepackage[protrusion=true,expansion=true]{microtype}	
-\usepackage{amsmath,amsfonts,amsthm} % Math packages
-\usepackage[pdftex]{graphicx}	
-\usepackage{url}
+\usepackage{float}
+\usepackage[margin=1in]{geometry}
 
 %%% Custom sectioning
 \usepackage{sectsty}
@@ -45,18 +25,13 @@
 %%% Custom headers/footers (fancyhdr package)
 \usepackage{fancyhdr}
 \pagestyle{fancyplain}
-\fancyhead{}											% No page header
-\fancyfoot[L]{}											% Empty 
-\fancyfoot[C]{}											% Empty
-\fancyfoot[R]{\thepage}									% Pagenumbering
+\fancyhead{}										% No page header
+\fancyfoot[L]{}									% Empty 
+\fancyfoot[C]{}									% Empty
+\fancyfoot[R]{\thepage}						% Pagenumbering
 \renewcommand{\headrulewidth}{0pt}			% Remove header underlines
-\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\renewcommand{\footrulewidth}{0pt}			% Remove footer underlines
 \setlength{\headheight}{13.6pt}
-
-%%% Equation and float numbering
-\numberwithin{equation}{section}		% Equationnumbering: section.eq#
-\numberwithin{figure}{section}			% Figurenumbering: section.fig#
-\numberwithin{table}{section}				% Tablenumbering: section.tab#
 
 %%% Maketitle metadata
 \newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
@@ -65,13 +40,13 @@
 		%\vspace{-1in} 	
 		\usefont{OT1}{bch}{b}{n}
 		\horrule{0.5pt} \\[0.4cm]
-		\huge This is the title of the template report \\
+		\huge Program Report \\
 		\horrule{2pt} \\[0.5cm]
 }
 \author{
-		\normalfont 								\normalsize
+		\normalfont 						\normalsize
         Philip Westrich\\[-3pt]		\normalsize
-        \today
+        April 17, 2017
 }
 \date{}
 
@@ -80,9 +55,63 @@
 \begin{document}
 \maketitle
 
-\section{Section 1}
+\section{Introduction}
 
-Text goes here.
+We were tasked with testing three variations of parallel dense matrix multiplication. The first used the naive method, 
+the second implemented Canon's algorithm with MPI, and the third used the same algorithm, except using the BSP model. 
+
+\section{Results}
+
+All three of these programs were then timed on the department's cluster. The results are listed in Table~\ref{tab:results}.
+Each program was run with 16 processes and matrices of size 80,000. Due to time and memory constraints, the naive method 
+was run for several smaller sizes, and quadratic regression was used to estimate the runtime for 80,000. The calculated 
+equation $0.000035609x^2 - 0.243762x + 173.02$ had an $r^2$ of exactly 1, so it should predict the outcome decently well.
+
+\begin{table}[H]
+   \centering
+   \caption{Results}
+   \label{tab:results}
+   \begin{tabular}{lr}
+      Program                & Runtime (s) \\ \hline
+      Naive 800              & 0.8         \\
+      Naive 8k               & 501.9       \\
+      Naive 10k              & 1296.3      \\
+      Naive 80k (estimate)   & 208569.7    \\
+      MPI 80k                & 13043.8     \\
+      BSP 80k                & 13582.5     \\  
+   \end{tabular}
+\end{table}
+
+\section{Discussion}
+
+\subsection{Naive vs. Cannon}
+
+As can be seen in Table~\ref{tab:results}, the MPI program was the fastest, followed shortly by the BSP program, and both 
+were trailed by the naive program by a factor of 15. The naive program also used multiples more memory than the other two. 
+It needed around 16 GB for its 10k computation, while the other two needed less than 4 GB.
+
+The much longer processing time can be most likely attributed to the massive amount of communication required by the naive 
+algorithm that Cannon's is designed to avoid. The high memory usage is due to the fact that every process needs a full copy 
+of the second matrix being multiplied, which adds up fast.
+
+It is also possible that the specific implementation of the naive algorithm was exceptionally slow; due to not having to 
+write one in my parallel programming course, the one used was borrowed from the internet. It had several bugs that led to 
+segmentation violations that needed to be fixed, but apart from that, it appeared to work and produce correct results.
+
+\subsection{BSP vs. MPI}
+
+It was not exceptionally difficult to convert the MPI program to the BSP program. They followed a very similar paradigm; 
+it was as simple as replacing the MPI method calls with BSP ones, and making sure that the superstep boundaries were in 
+the proper place.
+
+With the BSP library we used being a library with C++11 support, it is probably easier for programmers less expirienced with 
+parallel and distributed programming to use. It does have a pure C library that can be used as well that does not boast 
+the same level of abstraction the C++ library does.
+
+The BSP library we used was not meant for distributed programming. It instead was a shared memory approach. Even still, it 
+performed worse than the MPI version. This is probably from the lack of communication and computation overlap. The MPI 
+program was specifically written to use the non-blocking versions of sends and recoves so that it would be faster. We do 
+not believe the specific BSP library we used did the same, even though the BSP model allows for it.
 
 %%% End document
 \end{document}
