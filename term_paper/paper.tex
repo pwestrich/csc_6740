@@ -3,7 +3,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
 
-\title{The Title of my Paper}
+\title{Determining the Overhead of the EZTrace System}
 \author{Philip M. Westrich}
 \date{April 28, 2017}
 
@@ -15,7 +15,17 @@
 
 \begin{abstract}
 
-    This is my abstract. There's not much here.\\
+    High performance computing plays an integral role in modern science. Many will use large scale simulations to test 
+    things from new theories in astrophysics to determining the next week's weather. These simulations depend on the 
+    programs written to carry them out; if they are incorrect or inefficient, they may possibly hinder their progress 
+    rather than help it.
+    
+    The people who run these simulations always would like to make them faster; no one likes long wait times. Two methods 
+    used to determine the inefficiencies in large parallel or distributed systems are tracing and logging. However, they 
+    both do not come for free. On the extreme end, parallel debuggers can slow down a program up to 1000 times!
+    
+    In this paper, we will test the tracing system EZTrace and determine how much of a performance penalty it introduces 
+    into a system.\\
  
 \end{abstract}
 
@@ -23,10 +33,29 @@
 
 \section{Introduction}
 
-This is my paper. It isn't very long.
+High performance computing is an integral part of modern scientific applications.
+
+\subsection{Tracing and profiling}
+
+What is tracing and profiling?
+
+\subsection{The EZTrace system}
+
+What is EZTrace? \cite{Trahay2011}
+
+\section{Testing methods}
+
+This is how I describe how I tested things.
+
+\section{Results}
+
+This is where I describe and discuss my results.
 
 \section{Conclusion}
 
-This is my conclusion. It isn't very long either.
+This is where I sum everything up.
+
+\bibliographystyle{acm}
+\bibliography{bibliography.bib}
 
 \end{document}
