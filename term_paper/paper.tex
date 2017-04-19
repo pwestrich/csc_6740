@@ -30,6 +30,7 @@
 \end{abstract}
 
 \vspace{-0.3in}\noindent\rule{\linewidth}{0.4pt}
+\pagebreak
 
 \section{Introduction}
 
@@ -43,12 +44,44 @@ simulation wasted.
 
 \subsection{Tracing and profiling}
 
-Two related methods used to discern the reasons behind poor performance are tracing and profiling. 
+Two related methods used to discern the reasons behind poor performance are tracing and profiling. They have been used 
+for decades to discern the reasons a program is either producing incorrect results or operating inefficiently.
+
+Program tracing is the process of annotating a program with code such that it records the sequence of defined blocks a 
+program executes, and running the modified program to collect this data into a trace file. Program profiling counts the 
+number of times those defined blocks are executed in a program's lifetime. \cite{Ball1994, Larus1993} 
+
+However, tracing and profiling do not come for free. Since they usually involve inserting extra code into a program to 
+execute, there is naturally some nonzero amount of overhead introduced that increases as the number of blocks to measure 
+increases. The data generated from the process can and oftentimes quickly grows to such a size that it either physically 
+cannot be stored on available storage, or it becomes impractical to sort through for any meaning. Therefore, it is 
+imperative that the systems that perform the tracing or profiling are as efficient as possible with both time and storage 
+space. \cite{Ball1994, Larus1993, Mohror2012}
+
+Tools have been written that can do tracing and profiling in a decently efficient manner, but there are still some limitations 
+to what they can do. In the parallel computing world, there are numerous tools that can profile standard libraries, such as 
+OpenMP, MPI, POSIX threads, and others. However, when it comes to instrumenting user-defined functions, those tools fall 
+short, and the developer must resort to manual instrumentation. They also do not allow for different interpretation of 
+events; once an even is written, some data is lost and there is no other way to interpret it. \cite{Trahay2011} 
 
 \subsection{The EZTrace system}
 
 These complex systems require complicated tools to analyze them, especially once parallel and distributed computing are 
-introduced. One solution presented was the EZTrace performance analysis framework \cite{Trahay2011}.
+introduced. One solution presented was the EZTrace performance analysis framework. The authors of the framework state 
+that they have written EZTrace with the aforementioned issues in mind. \cite{Trahay2011}
+
+The EZTrace system is plugin-based. It comes with several preinstalled plugins for analysis of the common parallel and 
+distributed programming libraries: OpenMP, MPI, POSIX threads, and the PLASMA library. It also gives a method for a 
+developer to define their own to handle other code in their program. This way, most parellel systems can be automatically 
+analyzed with minimal effort from the developer, but if they decide more is needed, they can write a plugin. \cite{Trahay2011}
+
+The EZTrace system has a two-phase system. In the first, while the program is running, events are recorded. In the second, 
+after the program is finished, these events are then interpreted. This allows for decoupled recording and interpretation; 
+the user can treat an event in whichever way they wish depending on other context. It also means that more expensive 
+operations can be placed in the second phase, while the first focuses only on data retention. \cite{Trahay2011}
+
+In their paper, the authors claim that the EZTrace system performs all the aforementioned tasks in an efficient manner. 
+In this paper, we intend to duplicate their results.
 
 \section{Testing methods}
 
