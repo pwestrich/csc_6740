@@ -1,5 +1,5 @@
 
-\documentclass[10pt]{article}
+\documentclass[12pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
 
@@ -33,15 +33,22 @@
 
 \section{Introduction}
 
-High performance computing is an integral part of modern scientific applications.
+Large scale simulations are used all over the place to model hard to test phenomenon in modern science. As these models 
+become more complex and the simulations used to predict according to them become more and more complex, they require more 
+computational power, time, or both to produce accurate enough results.
+
+In order to prevent resources from being wasted, it is important that the algorithms used are as efficient as possible. 
+The difference between $ O(n^{2.5}) $ and $ O(n^3) $ in computation or communication could mean hundreds of hours per 
+simulation wasted.
 
 \subsection{Tracing and profiling}
 
-What is tracing and profiling?
+Two related methods used to discern the reasons behind poor performance are tracing and profiling. 
 
 \subsection{The EZTrace system}
 
-What is EZTrace? \cite{Trahay2011}
+These complex systems require complicated tools to analyze them, especially once parallel and distributed computing are 
+introduced. One solution presented was the EZTrace performance analysis framework \cite{Trahay2011}.
 
 \section{Testing methods}
 
