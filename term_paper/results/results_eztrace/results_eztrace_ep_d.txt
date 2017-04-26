@@ -1,0 +1,123 @@
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+Starting EZTrace... done
+
+ NAS Parallel Benchmarks 3.3 -- EP Benchmark
+
+ Number of random numbers generated:    137438953472
+ Number of active processes:                      32
+
+EP Benchmark Results:
+
+CPU Time =  147.6584
+N = 2^   36
+No. Gaussian Pairs =   53972171957.
+Sums =     1.982481200946593D+05   -1.020596636361768D+05
+Counts:
+  0   25154622775.
+  1   24017899906.
+  2    4508609839.
+  3     284201296.
+  4       6776403.
+  5         61541.
+  6           197.
+  7             0.
+  8             0.
+  9             0.
+
+
+ EP Benchmark Completed.
+ Class           =                        D
+ Size            =             137438953472
+ Iterations      =                        0
+ Time in seconds =                   147.66
+ Total processes =                       32
+ Compiled procs  =                       32
+ Mop/s total     =                   930.79
+ Mop/s/process   =                    29.09
+ Operation type  = Random numbers generated
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+ Compile date    =              24 Apr 2017
+
+ Compile options:
+    MPIF77       = mpif77
+    FLINK        = $(MPIF77)
+    FMPI_LIB     = -L/usr/local/lib -lmpi
+    FMPI_INC     = -I/usr/local/include
+    FFLAGS       = -O
+    FLINKFLAGS   = -O
+    RAND         = randi8
+
+
+ Please send feedbacks and/or the results of this run to:
+
+ NPB Development Team 
+ Internet: npb@nas.nasa.gov
+
+
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Cannot delete trace file: No such file or directory
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+Cannot delete trace file: No such file or directory
+Cannot delete trace file: No such file or directory
+Cannot delete trace file: No such file or directory
+Cannot delete trace file: No such file or directory
+Cannot delete trace file: No such file or directory
+Cannot open trace file: File exists
+Stopping EZTrace... saving trace  /home/CAE/pmwestrich42/traces/pmwestrich42_eztrace_log_rank_1
+--------------------------------------------------------------------------
+mpiexec noticed that the job aborted, but has no info as to the process
+that caused that situation.
+--------------------------------------------------------------------------

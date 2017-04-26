@@ -1,0 +1,9 @@
+--------------------------------------------------------------------------
+mpiexec was unable to launch the specified application as it could not find an executable:
+
+Executable: ft.D.32
+Node: c6320-2
+
+while attempting to start process rank 0.
+--------------------------------------------------------------------------
+32 total processes failed to start

@@ -1,0 +1,68 @@
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+Allocation failed: No such file or directory
+Unable to load binary ./ft.D.32
+--------------------------------------------------------------------------
+mpiexec noticed that the job aborted, but has no info as to the process
+that caused that situation.
+--------------------------------------------------------------------------

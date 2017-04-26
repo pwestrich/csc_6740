@@ -1,0 +1,26 @@
+\begin{thebibliography}{1}
+
+\bibitem{Ball1994}
+{\sc Ball, T., and Larus, J.~R.}
+\newblock {Optimally profiling and tracing programs}.
+\newblock {\em Acm Toplas 16}, 4 (1994), 1319--1360.
+
+\bibitem{Larus1993}
+{\sc Larus, J.~R.}
+\newblock {Efficient program tracing}.
+\newblock {\em Computer 26}, 5 (1993), 52--61.
+
+\bibitem{Mohror2012}
+{\sc Mohror, K., and Karavanic, K.~L.}
+\newblock {Trace profiling: Scalable event tracing on high-end parallel
+  systems}.
+\newblock {\em Parallel Computing 38}, 4-5 (2012), 194--225.
+
+\bibitem{Trahay2011}
+{\sc Trahay, F., Rue, F., Faverge, M., Ishikawa, Y., Namyst, R., and Dongarra,
+  J.}
+\newblock {EZTrace: a generic framework for performance analysis}.
+\newblock {\em International Symposium on Cluster, Cloud and Grid Computing
+  (CCGrid)\/} (2011), 618--619.
+
+\end{thebibliography}
