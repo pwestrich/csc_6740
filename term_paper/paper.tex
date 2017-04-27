@@ -2,10 +2,11 @@
 \documentclass[12pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
+\usepackage{float}
 
 \title{Determining the Overhead of the EZTrace System}
 \author{Philip M. Westrich}
-\date{April 28, 2017}
+\date{May 1, 2017}
 
 \begin{document}
 
@@ -85,11 +86,69 @@ In this paper, we intend to duplicate their results.
 
 \section{Testing methods}
 
-This is how I describe how I tested things.
+In their paper, the authors of the EZTrace system used the NAS Parallel Benchmark suite \cite{Bailey1991} to show that the 
+overhead their system introduced was indeed minimal compared to other tracing systems. For this paper, we ran the same 
+benchmarks at the same sizes and number of threads as they did. Since the resources were available, we ran them at a 
+larger size as well. \cite{Trahay2011}
+
+The partition of the high performance cluster that was used consists of four nodes, each with dual Intel Xeon E5-2680v4 
+and 128 GB of RAM, and was running Debian 7.10. Each benchmark ran was submitted to the batch queuing system and was 
+restricted to those nodes. Each test was run on a single node by itself.
+
+The latest version of the benchmarks at the time of writing this paper (3.3.1) were downloaded and compiled on the compute 
+nodes for size classes B, C, and D, except for the FT benchmark, which could not be compiled for size D. Benchmarks that 
+required a perfect square number of processes were built for 36 processes, and all others were built for 32. EZTrace was 
+installed from the Debian repository, which gave version 0.7-2-4. EZTrace was told to trace the MPI calls from each benchmark.
 
 \section{Results}
 
-This is where I describe and discuss my results.
+The results from the tests are in the following tables.
+
+\begin{table}[H]
+\centering
+\caption{Execution time (s), without EZTrace}
+\label{tab:notrace}
+\begin{tabular}{|l|cccccccc|}
+\hline
+Class & BT      & CG     & EP     & FT   & IS    & LU      & MG     & SP      \\ \hline
+B     & 22.07   & 5.28   & 3.04   & 5.46 & 0.45  & 14.54   & 1.36   & 26.42   \\
+C     & 91.72   & 19.87  & 10.53  & 21.8 & 1.61  & 56.25   & 7.33   & 104.88  \\
+D     & 1655.87 & 710.35 & 146.11 &      & 25.33 & 1330.85 & 170.91 & 2046.87 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Execution time (s), with EZTrace}
+\label{tab:eztrace}
+\begin{tabular}{|l|cccccccc|}
+\hline
+Class & BT      & CG     & EP     & FT    & IS    & LU      & MG     & SP      \\ \hline
+B     & 21.88   & 7.19   & 3.08   & 5.53  & 0.53  & 15.25   & 1.38   & 23.40   \\
+C     & 89.27   & 18.43  & 10.07  & 20.28 & 1.80  & 66.12   & 8.39   & 106.32  \\
+D     & 1654.77 & 779.60 & 147.66 &       & 27.79 & 1320.66 & 172.21 & 2207.90 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{EZTrace overhead}
+\label{tab:overhead}
+\begin{tabular}{|l|cccccccc}
+\hline
+Class & BT      & CG      & EP      & FT      & IS      & LU      & MG      & SP       \\ \hline
+B     & -0.86\% & 36.17\% & 1.32\%  & 1.28\%  & 17.78\% & 4.88\%  & 1.47\%  & -11.43\% \\
+C     & -2.67\% & -7.25\% & -4.37\% & -4.25\% & 11.80\% & 17.55\% & 14.46\% & 1.37\%   \\
+D     & -0.07\% & 9.75\%  & 1.06\%  &         & 9.71\%  & -0.77\% & 0.76\%  & 7.87\%   \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Discussion}
+
+As can be seen from \ref{tab:overhead}, there is no clear-cut trend in the amount of overhead as the problem size increases.
 
 \section{Conclusion}
 

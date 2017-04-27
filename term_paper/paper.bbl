@@ -1,5 +1,13 @@
 \begin{thebibliography}{1}
 
+\bibitem{Bailey1991}
+{\sc Bailey, D., Barszcz, E., Barton, J., Browning, D., Carter, R., Dagum, L.,
+  Fatoohi, R., Fineberg, S., Frederickson, P., Lasinski, T., Schreiber, R.,
+  Simon, H., Venkatakrishnan, V., and Weeratunga, S.}
+\newblock {The NAS Parallel Benchmarks}.
+\newblock {\em International Journal of High Performance Computing Applications
+  5}, 3 (1991), 63--73.
+
 \bibitem{Ball1994}
 {\sc Ball, T., and Larus, J.~R.}
 \newblock {Optimally profiling and tracing programs}.
