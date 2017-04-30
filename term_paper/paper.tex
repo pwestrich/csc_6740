@@ -3,6 +3,8 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
 \usepackage{float}
+\usepackage{graphicx}
+\graphicspath{{images/}}
 
 \title{Determining the Overhead of the EZTrace System}
 \author{Philip M. Westrich}
@@ -96,13 +98,17 @@ and 128 GB of RAM, and was running Debian 7.10. Each benchmark ran was submitted
 restricted to those nodes. Each test was run on a single node by itself.
 
 The latest version of the benchmarks at the time of writing this paper (3.3.1) were downloaded and compiled on the compute 
-nodes for size classes B, C, and D, except for the FT benchmark, which could not be compiled for size D. Benchmarks that 
-required a perfect square number of processes were built for 36 processes, and all others were built for 32. EZTrace was 
-installed from the Debian repository, which gave version 0.7-2-4. EZTrace was told to trace the MPI calls from each benchmark.
+nodes for size classes B, C, and D, except for the FT benchmark, which could not be compiled for size D. While the university 
+has the resources to also execute size class E, it could not be done because the cluster was not free enough to accommodate 
+them, and the jobs would not have finished fast enough in time to write this paper.
+
+Benchmarks that required a perfect square number of processes were built for 36 processes, and all others were built for 
+32. EZTrace was installed from the Debian repository, which gave version 0.7-2-4. EZTrace was told to trace the MPI calls 
+from each benchmark. Due to time constraints, each benchmark was executed once with EZTrace and once without.
 
 \section{Results}
 
-The results from the tests are in the following tables.
+The results from the tests are in the following tables. 
 
 \begin{table}[H]
 \centering
@@ -136,7 +142,7 @@ D     & 1654.77 & 779.60 & 147.66 &       & 27.79 & 1320.66 & 172.21 & 2207.90 \
 \centering
 \caption{EZTrace overhead}
 \label{tab:overhead}
-\begin{tabular}{|l|cccccccc}
+\begin{tabular}{|l|cccccccc|}
 \hline
 Class & BT      & CG      & EP      & FT      & IS      & LU      & MG      & SP       \\ \hline
 B     & -0.86\% & 36.17\% & 1.32\%  & 1.28\%  & 17.78\% & 4.88\%  & 1.47\%  & -11.43\% \\
@@ -146,13 +152,59 @@ D     & -0.07\% & 9.75\%  & 1.06\%  &         & 9.71\%  & -0.77\% & 0.76\%  & 7.
 \end{tabular}
 \end{table}
 
+\begin{figure}[H]
+\caption{The results from the previous paper \cite{Trahay2011}}
+\label{fig:previous}
+\includegraphics[scale=0.6]{eztrace_results}
+\centering
+\end{figure}
+
+\begin{figure}[H]
+\caption{Overhead as the size class increases}
+\label{fig:overhead}
+\includegraphics[scale=0.5]{overhead_graphs}
+\centering
+\end{figure}
+
 \subsection{Discussion}
 
-As can be seen from \ref{tab:overhead}, there is no clear-cut trend in the amount of overhead as the problem size increases.
+As can be seen from Figure~\ref{fig:overhead}, there is no clear-cut trend in the amount of overhead as the problem size 
+increases. In some cases, EZTrace took noticeably longer, such as with CG class B or LU class C. However, in other benchmarks, 
+the EZTrace benchmarks were faster, such as in SP class B. 
+
+This does mirror slightly the results that the authors of EZTrace got in their tests in Figure~\ref{fig:previous} \cite{Trahay2011}. 
+We had hoped that a trend would have been more defined when running the benchmarks for larger size classes, but that was 
+not the case.
+
+\subsection{Possible improvements}
+
+Since the tests we performed were not very conclusive, there is obviously some room for improvement. Most notably, the 
+benchmarks need to be run more times than just once. An average of those times would help remove some of the other factors 
+that affect a program's runtime, such as other processes running on the machine and what the operating system decides to 
+do with them.
+
+It also would have been interesting to see how running the benchmarks across multiple nodes would have affected the overhead 
+measurements. Since many MPI programs tend to spend plenty of time waiting for messages to be passed, it is possible that 
+the time spend in communication could have outweighed EZTrace's computation enough that it did not appear. In programs of 
+that nature, running EZTrace would not be noticeable. It would have also reflected the EZTrace system's authors test setup 
+better.
+
+One performance bottleneck in our test setup is the disk I/O speed. The home folders for user accounts are mapped to a 
+central shared network drive. While this is very convenient for the users of the system in the fact that all of their 
+files are in the exact same location regardless of the machine they log on to, it is noticeably slow. Many systems across 
+the university with many users logged on are all accessing this shared storage at once. Therefore, our benchmarks may end 
+up spending lots of time idling when writing to disk, and that time is nondeterministic depending on what other users on 
+the university are doing at that give time. For testing purposes, it would be ideal to remove this variable.
 
 \section{Conclusion}
 
-This is where I sum everything up.
+In this paper, we ran the NAS Parallel Benchmark suite \cite{Bailey1991} on the university's high performance computing 
+cluster in order to determine the overhead that the EZTrace automatic paralell program tracing framework \cite{Trahay2011} 
+adds to a system. 
+
+However, the results from our test were not very conclusive. The overhead amounts did not appear to set any clear trend. 
+More testing is needed to determine the efficiency of the framework. This mirrors the results that the authors of EZTrace 
+got in their tests. \cite{Trahay2011}. 
 
 \bibliographystyle{acm}
 \bibliography{bibliography.bib}
